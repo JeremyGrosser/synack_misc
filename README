@@ -1,0 +1,4 @@
+A small collection of packages useful for embedded projects. No guarantees are
+made about the correctness or safety of these procedures. In particular, the
+Text_Format and Str packages may have unbounded stack usage depending on the
+strings you feed them.
