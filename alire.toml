@@ -1,0 +1,13 @@
+name = "synack_misc"
+description = "Miscellaneous useful packages for embedded projects"
+version = "0.1.0"
+
+authors = ["Jeremy Grosser"]
+maintainers = ["Jeremy Grosser <jeremy@synack.me>"]
+maintainers-logins = ["JeremyGrosser"]
+licenses = "BSD-3-Clause"
+
+[[depends-on]]  # Added by alr
+hal = "~0.1.0"  # Added by alr
+gnat_arm_elf = "^11.2.2"  # Added by alr
+rp2040_hal = "~0.6.0"  # Added by alr
