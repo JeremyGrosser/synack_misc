@@ -1,3 +1,8 @@
+--
+--  Copyright (C) 2021 Jeremy Grosser <jeremy@synack.me>
+--
+--  SPDX-License-Identifier: BSD-3-Clause
+--
 package body HT16K33 is
    procedure Initialize
       (This : in out Device)
