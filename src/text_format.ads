@@ -1,8 +1,3 @@
---
---  Copyright (C) 2021 Jeremy Grosser <jeremy@synack.me>
---
---  SPDX-License-Identifier: BSD-3-Clause
---
 with HAL.Real_Time_Clock; use HAL.Real_Time_Clock;
 with HAL;
 
@@ -29,9 +24,15 @@ package Text_Format is
        Year_Offset : Integer := 2000)
        return String;
 
+   subtype ISO_Time_String is String (1 .. 8);
+
    function ISO_Time
       (Time : RTC_Time)
-      return String;
+      return ISO_Time_String;
+
+   function From_ISO_Time
+      (Time : ISO_Time_String)
+      return RTC_Time;
 
    function ISO_Date_Time
       (Date        : RTC_Date;

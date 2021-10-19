@@ -15,6 +15,9 @@ package body Serial_Console is
       Data   : constant UART_Data_8b (1 .. 1) := (1 => UInt8 (Character'Pos (Item)));
       Status : UART_Status;
    begin
+      if not This.Output_Enable then
+         return;
+      end if;
       This.UART.Transmit (Data, Status, 0);
       if Status /= Ok then
          raise Console_Error;
@@ -29,6 +32,9 @@ package body Serial_Console is
          with Address => Item'Address;
       Status : UART_Status;
    begin
+      if not This.Output_Enable then
+         return;
+      end if;
       This.UART.Transmit (Data, Status, 0);
       if Status /= Ok then
          raise Console_Error;
@@ -45,16 +51,21 @@ package body Serial_Console is
    end Put_Line;
 
    procedure Get
-      (This : in out Port;
-       Ch   : out Character)
+      (This    : in out Port;
+       Ch      : out Character;
+       Timeout : Natural := 0)
    is
       Data   : UART_Data_8b (1 .. 1);
-      Status : UART_Status;
+      Status : UART_Status := Busy;
    begin
-      This.UART.Receive (Data, Status, 0);
-      if Status /= Ok then
-         raise Console_Error;
-      end if;
+      --  Ignore framing and parity errors
+      while Status /= Ok loop
+         This.UART.Receive (Data, Status, Timeout);
+         if Status = Err_Timeout then
+            Ch := ASCII.NUL;
+            return;
+         end if;
+      end loop;
       Ch := Character'Val (Integer (Data (1)));
    end Get;
 
@@ -64,12 +75,11 @@ package body Serial_Console is
    is
       Data   : UART_Data_8b (Item'Range)
          with Address => Item'Address;
-      Status : UART_Status;
+      Status : UART_Status := Busy;
    begin
-      This.UART.Receive (Data, Status, 0);
-      if Status /= Ok then
-         raise Console_Error;
-      end if;
+      while Status /= Ok loop
+         This.UART.Receive (Data, Status, 0);
+      end loop;
    end Get;
 
    procedure New_Line
@@ -80,27 +90,24 @@ package body Serial_Console is
    end New_Line;
 
    function Get_Line
-      (This : in out Port;
-       Echo : Boolean := False)
+      (This    : in out Port;
+       Timeout : Natural := 0)
       return String
    is
       Ch : Character;
       I  : Positive := This.Buffer'First;
    begin
       while I <= This.Buffer'Last loop
-         Get (This, Ch);
-         if Echo then
-            This.Put (Ch);
-         end if;
+         Get (This, Ch, Timeout);
          case Ch is
             when ASCII.CR | ASCII.LF =>
-               This.New_Line;
                return This.Buffer (This.Buffer'First .. I - 1);
             when ASCII.DEL =>
-               This.Put (ASCII.BS & " " & ASCII.BS);
                if I > This.Buffer'First then
                   I := I - 1;
                end if;
+            when ASCII.NUL =>
+               return This.Buffer (This.Buffer'First .. I);
             when others =>
                This.Buffer (I) := Ch;
                I := I + 1;

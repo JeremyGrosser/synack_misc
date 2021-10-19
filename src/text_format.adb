@@ -3,6 +3,8 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
+with Str;
+
 package body Text_Format is
 
    Numbers    : constant String := "0123456789ABCDEF";
@@ -123,7 +125,7 @@ package body Text_Format is
 
    function ISO_Time
       (Time : RTC_Time)
-      return String
+      return ISO_Time_String
    is
       T : String (1 .. 8) := "00:00:00";
    begin
@@ -132,6 +134,17 @@ package body Text_Format is
       From_Natural (Integer (Time.Sec), T (7 .. 8));
       return T;
    end ISO_Time;
+
+   function From_ISO_Time
+      (Time : ISO_Time_String)
+      return RTC_Time
+   is
+   begin
+      return
+         (Hour => RTC_Hour (Str.To_Natural (Time (1 .. 2))),
+          Min  => RTC_Minute (Str.To_Natural (Time (4 .. 5))),
+          Sec  => RTC_Second (Str.To_Natural (Time (7 .. 8))));
+   end From_ISO_Time;
 
    function ISO_Date_Time
       (Date        : RTC_Date;

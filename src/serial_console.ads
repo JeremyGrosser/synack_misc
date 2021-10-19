@@ -9,7 +9,10 @@ package Serial_Console is
 
    type Port
       (UART : not null HAL.UART.Any_UART_Port)
-   is tagged private;
+   is tagged record
+      Output_Enable : Boolean := True;
+      Buffer        : String (1 .. 64);
+   end record;
 
    Console_Error : exception;
 
@@ -26,8 +29,9 @@ package Serial_Console is
        Item : String);
 
    procedure Get
-      (This : in out Port;
-       Ch   : out Character);
+      (This    : in out Port;
+       Ch      : out Character;
+       Timeout : Natural := 0);
 
    procedure Get
       (This : in out Port;
@@ -37,16 +41,8 @@ package Serial_Console is
       (This : in out Port);
 
    function Get_Line
-      (This : in out Port;
-       Echo : Boolean := False)
+      (This    : in out Port;
+       Timeout : Natural := 0)
       return String;
-
-private
-
-   type Port
-      (UART : not null HAL.UART.Any_UART_Port)
-   is tagged record
-      Buffer : String (1 .. 64);
-   end record;
 
 end Serial_Console;
