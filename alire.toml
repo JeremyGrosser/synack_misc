@@ -10,4 +10,4 @@ licenses = "BSD-3-Clause"
 [[depends-on]]  # Added by alr
 hal = "~0.1.0"  # Added by alr
 gnat_arm_elf = "^11.2.2"  # Added by alr
-rp2040_hal = "~0.6.0"  # Added by alr
+rp2040_hal = "^0"  # Added by alr
