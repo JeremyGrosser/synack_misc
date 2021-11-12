@@ -72,7 +72,6 @@ package body Text_Format is
       (Data : HAL.UInt8_Array;
        Str  : out String)
    is
-      use HAL;
       I : Integer := Str'Last;
       J : Integer := Data'First;
    begin
