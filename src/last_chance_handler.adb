@@ -21,6 +21,7 @@ package body Last_Chance_Handler is
       (Source_Location : System.Address;
        Line            : Integer)
    is
+      pragma Unreferenced (Source_Location);
       use HAL.UART;
    begin
       if Port /= null then

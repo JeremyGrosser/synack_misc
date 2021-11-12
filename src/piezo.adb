@@ -3,7 +3,6 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
-with HAL; use HAL;
 with RP.Device;
 with RP; use RP;
 
