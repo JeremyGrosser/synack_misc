@@ -35,6 +35,11 @@ package Str is
        C : Character)
        return String;
 
+   function Strip_Leading
+      (S : String;
+       C : Character)
+       return String;
+
    function Trim
       (S     : String;
        Chars : String)

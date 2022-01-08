@@ -113,6 +113,27 @@ package body Str is
       end if;
    end Strip;
 
+   function Strip_Leading
+      (S : String;
+       C : Character)
+       return String
+   is
+   begin
+      if S'Length = 0 then
+         return S;
+      end if;
+
+      if S'Length = 1 and then S (S'First) = C then
+         return "";
+      end if;
+
+      if S (S'First) = C then
+         return Strip (S (S'First + 1 .. S'Last), C);
+      else
+         return S;
+      end if;
+   end Strip_Leading;
+
    function Trim
       (S     : String;
        Chars : String)

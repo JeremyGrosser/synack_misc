@@ -77,7 +77,7 @@ package body Text_Format is
    begin
       loop
          I := I - 2;
-         exit when I < Str'First or J > Data'Last;
+         exit when I < Str'First or else J > Data'Last;
          Str (I .. I + 1) := Hex (Data (J));
          J := J + 1;
       end loop;
@@ -153,13 +153,47 @@ package body Text_Format is
    is (ISO_Date (Date, Year_Offset) & ' ' & ISO_Time (Time));
 
    function From_Float
-      (F : Float)
+      (F    : Float;
+       Fore : Positive := 1;
+       Aft  : Positive := 3)
       return String
    is
-      Whole  : constant Integer := Integer (F);
-      Tenths : constant Natural := Natural ((F - Float (Whole)) * 10.0) mod 10;
+      Sign      : constant String := (if F < 0.0 then "-" else "");
+      Fore_Str  : String (1 .. Fore) := (others => '0');
+      Aft_Str   : String (1 .. Aft);
+      Magnitude : Positive := 1;
+      A, B      : Integer;
+      N         : Float;
    begin
-      return From_Integer (Whole) & "." & From_Natural (Tenths);
+      if F < 0.0 then
+         N := F * (-1.0);
+      else
+         N := F;
+      end if;
+
+      A := Integer (Float'Floor (N));
+      B := A mod 10;
+      for I in reverse 1 .. Fore loop
+         B := A mod 10;
+         Fore_Str (I) := Character'Val (Character'Pos ('0') + B);
+         A := A / 10;
+         exit when A = 0;
+      end loop;
+
+      for I in 1 .. Aft loop
+         Magnitude := Magnitude * 10;
+      end loop;
+
+      A := Integer (N * Float (Magnitude));
+      for I in reverse 1 .. Aft loop
+         B := A mod 10;
+         Aft_Str (I) := Character'Val (Character'Pos ('0') + B);
+         if A > 0 then
+            A := A / 10;
+         end if;
+      end loop;
+
+      return Sign & Str.Strip_Leading (Fore_Str, '0') & '.' & Aft_Str;
    end From_Float;
 
    function To_UInt8_Array

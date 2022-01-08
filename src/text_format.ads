@@ -47,7 +47,9 @@ package Text_Format is
 
    --  Truncates to tenths
    function From_Float
-      (F : Float)
+      (F    : Float;
+       Fore : Positive := 1;
+       Aft  : Positive := 3)
       return String;
 
    subtype Hex_String is String (1 .. 2);
