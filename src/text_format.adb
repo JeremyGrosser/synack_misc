@@ -193,7 +193,11 @@ package body Text_Format is
          end if;
       end loop;
 
-      return Sign & Str.Strip_Leading (Fore_Str, '0') & '.' & Aft_Str;
+      if Fore_Str'Length > 1 then
+         return Sign & Str.Strip_Leading (Fore_Str, '0') & '.' & Aft_Str;
+      else
+         return Sign & Fore_Str & '.' & Aft_Str;
+      end if;
    end From_Float;
 
    function To_UInt8_Array
