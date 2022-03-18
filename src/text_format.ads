@@ -45,7 +45,6 @@ package Text_Format is
        Year_Offset : Integer := 2000)
        return String;
 
-   --  Truncates to tenths
    function From_Float
       (F    : Float;
        Fore : Positive := 1;
