@@ -6,6 +6,5 @@ authors = ["Jeremy Grosser"]
 maintainers = ["Jeremy Grosser <jeremy@synack.me>"]
 maintainers-logins = ["JeremyGrosser"]
 
-[[depends-on]]
-rp2040_hal = "^1"
-hal = "~0.1.0"
+[[depends-on]]  # Added by alr
+hal = "~0.1.0"  # Added by alr

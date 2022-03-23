@@ -1,27 +1,20 @@
-with "config/synack_misc_config.gpr";
-project Synack_Misc is
-
-   for Library_Name use "Synack_Misc";
-   for Library_Version use Project'Library_Name & ".so." & Synack_Misc_Config.Crate_Version;
+with "config/synack_misc_test_config.gpr";
+project Synack_Misc_Test is
 
    for Source_Dirs use ("src");
    for Object_Dir use "obj";
    for Create_Missing_Dirs use "True";
-   for Library_Dir use "lib";
-
-   type Library_Type_Type is ("relocatable", "static", "static-pic");
-   Library_Type : Library_Type_Type :=
-     external ("SYNACK_MISC_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
-   for Library_Kind use Library_Type;
+   for Exec_Dir use "bin";
+   for Main use ("synack_misc_test.adb");
 
    type Enabled_Kind is ("enabled", "disabled");
-   Compile_Checks : Enabled_Kind := External ("SYNACK_MISC_COMPILE_CHECKS", "disabled");
-   Runtime_Checks : Enabled_Kind := External ("SYNACK_MISC_RUNTIME_CHECKS", "disabled");
-   Style_Checks : Enabled_Kind := External ("SYNACK_MISC_STYLE_CHECKS", "disabled");
-   Contracts_Checks : Enabled_Kind := External ("SYNACK_MISC_CONTRACTS", "disabled");
+   Compile_Checks : Enabled_Kind := External ("SYNACK_MISC_TEST_COMPILE_CHECKS", "enabled");
+   Runtime_Checks : Enabled_Kind := External ("SYNACK_MISC_TEST_RUNTIME_CHECKS", "enabled");
+   Style_Checks : Enabled_Kind := External ("SYNACK_MISC_TEST_STYLE_CHECKS", "disabled");
+   Contracts_Checks : Enabled_Kind := External ("SYNACK_MISC_TEST_CONTRACTS", "enabled");
 
    type Build_Kind is ("debug", "optimize");
-   Build_Mode : Build_Kind := External ("SYNACK_MISC_BUILD_MODE", "optimize");
+   Build_Mode : Build_Kind := External ("SYNACK_MISC_TEST_BUILD_MODE", "optimize");
 
    Compile_Checks_Switches := ();
    case Compile_Checks is
@@ -85,4 +78,4 @@ project Synack_Misc is
       for Switches ("Ada") use ("-Es"); --  Symbolic traceback
    end Binder;
 
-end Synack_Misc;
+end Synack_Misc_Test;
