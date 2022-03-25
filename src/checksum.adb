@@ -10,7 +10,7 @@ package body Checksum is
    begin
       for D of Data loop
          CRC := CRC xor D;
-         for I in 1 .. 7 loop
+         for I in 1 .. 8 loop
             if (CRC and 16#80#) /= 0 then
                CRC := (CRC * 2) xor Poly;
             else
