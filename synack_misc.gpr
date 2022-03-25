@@ -15,10 +15,10 @@ project Synack_Misc is
    for Library_Kind use Library_Type;
 
    type Enabled_Kind is ("enabled", "disabled");
-   Compile_Checks : Enabled_Kind := External ("SYNACK_MISC_COMPILE_CHECKS", "disabled");
-   Runtime_Checks : Enabled_Kind := External ("SYNACK_MISC_RUNTIME_CHECKS", "disabled");
-   Style_Checks : Enabled_Kind := External ("SYNACK_MISC_STYLE_CHECKS", "disabled");
-   Contracts_Checks : Enabled_Kind := External ("SYNACK_MISC_CONTRACTS", "disabled");
+   Compile_Checks : Enabled_Kind := External ("SYNACK_MISC_COMPILE_CHECKS", "enabled");
+   Runtime_Checks : Enabled_Kind := External ("SYNACK_MISC_RUNTIME_CHECKS", "enabled");
+   Style_Checks : Enabled_Kind := External ("SYNACK_MISC_STYLE_CHECKS", "enabled");
+   Contracts_Checks : Enabled_Kind := External ("SYNACK_MISC_CONTRACTS", "enabled");
 
    type Build_Kind is ("debug", "optimize");
    Build_Mode : Build_Kind := External ("SYNACK_MISC_BUILD_MODE", "optimize");
@@ -28,8 +28,7 @@ project Synack_Misc is
       when "enabled" =>
          Compile_Checks_Switches :=
            ("-gnatwa",  -- All warnings
-            "-gnatVa",  -- All validity checks
-            "-gnatwe"); -- Warnings as errors
+            "-gnatVa");  -- All validity checks
       when others => null;
    end case;
 
@@ -47,7 +46,7 @@ project Synack_Misc is
          Style_Checks_Switches :=
            ("-gnatyg",   -- GNAT Style checks
             "-gnaty-d",  -- Disable no DOS line terminators
-            "-gnatyM80", -- Maximum line length
+            "-gnatyM120", -- Maximum line length
             "-gnatyO");  -- Overriding subprograms explicitly marked as such
       when others => null;
    end case;
@@ -79,7 +78,10 @@ project Synack_Misc is
         Style_Checks_Switches &
         Contracts_Switches &
         ("-gnatw.X", -- Disable warnings for No_Exception_Propagation
-         "-gnatQ");  -- Don't quit. Generate ALI and tree files even if illegalities
+         "-gnatQ",   -- Don't quit. Generate ALI and tree files even if illegalities
+         "-fstack-usage",
+         "-ffunction-sections",
+         "-fdata-sections");
    end Compiler;
 
    package Binder is
