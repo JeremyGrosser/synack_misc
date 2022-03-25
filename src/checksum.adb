@@ -12,9 +12,9 @@ package body Checksum is
          CRC := CRC xor D;
          for I in 1 .. 8 loop
             if (CRC and 16#80#) /= 0 then
-               CRC := Shift_Left (CRC, 1) xor Poly;
+               CRC := (CRC * 2) xor Poly;
             else
-               CRC := Shift_Left (CRC, 1);
+               CRC := (CRC * 2);
             end if;
          end loop;
       end loop;
