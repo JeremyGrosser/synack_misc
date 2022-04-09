@@ -1,3 +1,8 @@
+--
+--  Copyright (C) 2022 Jeremy Grosser <jeremy@synack.me>
+--
+--  SPDX-License-Identifier: BSD-3-Clause
+--
 generic
    type Element_Type is private;
    Max_Items : Positive := 1;
@@ -34,6 +39,7 @@ package Generic_Bounded_Stacks is
        Item : out Element_Type)
    with Pre  => not Is_Empty (S),
         Post => Length (S) = Length (S'Old) - 1;
+   --  Last In, First Out (LIFO)
 
    procedure Clear
       (S : in out Stack);
