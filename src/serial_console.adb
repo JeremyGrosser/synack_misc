@@ -15,13 +15,7 @@ package body Serial_Console is
       Data   : constant UART_Data_8b (1 .. 1) := (1 => UInt8 (Character'Pos (Item)));
       Status : UART_Status;
    begin
-      if not This.Output_Enable then
-         return;
-      end if;
-      This.UART.Transmit (Data, Status, 0);
-      if Status /= Ok then
-         raise Console_Error;
-      end if;
+      This.UART.Transmit (Data, Status, Timeout => 0);
    end Put;
 
    procedure Put
@@ -32,14 +26,15 @@ package body Serial_Console is
          with Address => Item'Address;
       Status : UART_Status;
    begin
-      if not This.Output_Enable then
-         return;
-      end if;
-      This.UART.Transmit (Data, Status, 0);
-      if Status /= Ok then
-         raise Console_Error;
-      end if;
+      This.UART.Transmit (Data, Status, Timeout => 0);
    end Put;
+
+   procedure New_Line
+      (This : in out Port)
+   is
+   begin
+      This.Put (ASCII.CR & ASCII.LF);
+   end New_Line;
 
    procedure Put_Line
       (This : in out Port;
@@ -51,70 +46,45 @@ package body Serial_Console is
    end Put_Line;
 
    procedure Get
-      (This    : in out Port;
-       Ch      : out Character;
-       Timeout : Natural := 0)
+      (This : in out Port;
+       Ch   : out Character)
    is
-      Data   : UART_Data_8b (1 .. 1);
-      Status : UART_Status := Busy;
+      use Character_Buffers;
    begin
-      --  Ignore framing and parity errors
-      while Status /= Ok loop
-         This.UART.Receive (Data, Status, Timeout);
-         if Status = Err_Timeout then
-            Ch := ASCII.NUL;
-            return;
-         end if;
+      while Is_Empty (This.RX_Buffer) loop
+         null;
       end loop;
-      Ch := Character'Val (Integer (Data (1)));
+
+      Ch := First_Element (This.RX_Buffer);
+      Delete_First (This.RX_Buffer);
    end Get;
 
    procedure Get
       (This : in out Port;
        Item : out String)
    is
-      Data   : UART_Data_8b (Item'Range)
-         with Address => Item'Address;
-      Status : UART_Status := Busy;
    begin
-      while Status /= Ok loop
-         This.UART.Receive (Data, Status, 0);
+      for I in Item'Range loop
+         This.Get (Item (I));
       end loop;
    end Get;
 
-   procedure New_Line
+   procedure Poll
       (This : in out Port)
    is
+      use Character_Buffers;
+      Status : UART_Status;
+      Data   : UART_Data_8b (1 .. 1);
+      Ch     : Character with Address => Data (1)'Address;
    begin
-      This.Put (ASCII.CR & ASCII.LF);
-   end New_Line;
+      if Is_Full (This.RX_Buffer) then
+         Delete_First (This.RX_Buffer);
+      end if;
 
-   function Get_Line
-      (This    : in out Port;
-       Timeout : Natural := 0)
-      return String
-   is
-      Ch : Character;
-      I  : Positive := This.Buffer'First;
-   begin
-      while I <= This.Buffer'Last loop
-         Get (This, Ch, Timeout);
-         case Ch is
-            when ASCII.CR | ASCII.LF =>
-               return This.Buffer (This.Buffer'First .. I - 1);
-            when ASCII.DEL =>
-               if I > This.Buffer'First then
-                  I := I - 1;
-               end if;
-            when ASCII.NUL =>
-               return This.Buffer (This.Buffer'First .. I);
-            when others =>
-               This.Buffer (I) := Ch;
-               I := I + 1;
-         end case;
-      end loop;
-      --  Buffer is full but no LF was seen, return the whole thing.
-      return This.Buffer;
-   end Get_Line;
+      This.UART.Receive (Data, Status, Timeout => 0);
+      if Status = Ok then
+         Append (This.RX_Buffer, Ch);
+      end if;
+   end Poll;
 
 end Serial_Console;

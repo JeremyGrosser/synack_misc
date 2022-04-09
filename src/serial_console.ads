@@ -3,18 +3,14 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
+with Generic_Ring_Buffers;
 with HAL.UART;
 
 package Serial_Console is
 
    type Port
       (UART : not null HAL.UART.Any_UART_Port)
-   is tagged record
-      Output_Enable : Boolean := True;
-      Buffer        : String (1 .. 64);
-   end record;
-
-   Console_Error : exception;
+   is tagged private;
 
    procedure Put
       (This : in out Port;
@@ -24,25 +20,41 @@ package Serial_Console is
       (This : in out Port;
        Item : String);
 
+   procedure New_Line
+      (This : in out Port);
+
    procedure Put_Line
       (This : in out Port;
        Item : String);
 
    procedure Get
-      (This    : in out Port;
-       Ch      : out Character;
-       Timeout : Natural := 0);
+      (This : in out Port;
+       Ch   : out Character);
+   --  If the RX buffer is empty, Get will block
 
    procedure Get
       (This : in out Port;
        Item : out String);
+   --  Get will block until Item'Length characters are received from the buffer
 
-   procedure New_Line
+   procedure Poll
       (This : in out Port);
+   --  Poll should be called upon receiving a UART interrupt, it will read a
+   --  single byte into the buffer for Get.
+   --
+   --  Poll will block if no data is available from the UART
+   --  If the buffer is full, Poll will delete the oldest character in the buffer.
 
-   function Get_Line
-      (This    : in out Port;
-       Timeout : Natural := 0)
-      return String;
+private
+
+   package Character_Buffers is new Generic_Ring_Buffers
+      (Capacity     => 128,
+       Element_Type => Character);
+
+   type Port
+      (UART : not null HAL.UART.Any_UART_Port)
+   is tagged record
+      RX_Buffer : Character_Buffers.Ring_Buffer;
+   end record;
 
 end Serial_Console;
