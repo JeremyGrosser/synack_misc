@@ -43,6 +43,16 @@ package body Generic_Bounded_Stacks is
       S.Last := S.Last - 1;
    end Pop;
 
+   function Pop
+      (S : in out Stack)
+      return Element_Type
+   is
+      Item : Element_Type;
+   begin
+      Pop (S, Item);
+      return Item;
+   end Pop;
+
    procedure Clear
       (S : in out Stack)
    is

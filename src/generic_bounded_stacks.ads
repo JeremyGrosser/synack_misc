@@ -41,6 +41,12 @@ package Generic_Bounded_Stacks is
         Post => Length (S) = Length (S'Old) - 1;
    --  Last In, First Out (LIFO)
 
+   function Pop
+      (S : in out Stack)
+      return Element_Type
+   with Pre  => not Is_Empty (S),
+        Post => Length (S) = Length (S'Old) - 1;
+
    procedure Clear
       (S : in out Stack);
 
