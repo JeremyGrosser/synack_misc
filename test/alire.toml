@@ -7,12 +7,13 @@ maintainers = ["Jeremy Grosser <jeremy@synack.me>"]
 maintainers-logins = ["JeremyGrosser"]
 
 executables = ["synack_misc_test"]
-[[depends-on]]  # Added by alr
-synack_misc = "~0.1.0"  # Added by alr
-[[pins]]  # Added by alr
-synack_misc = { path='../../synack_misc' }   # Added by alr
-[[depends-on]]  # Added by alr
-hal = "~0.1.0"  # Added by alr
 
-#[gpr-set-externals]
-#SYNACK_MISC_BUILD_MODE = "debug"
+[[depends-on]]
+synack_misc = "~0.1.0"
+hal = "~0.1.0"
+
+[[pins]]
+synack_misc = { path='../' }
+
+[gpr-set-externals]
+SYNACK_MISC_BUILD_MODE = "debug"
