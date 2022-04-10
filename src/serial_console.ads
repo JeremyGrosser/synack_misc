@@ -32,6 +32,16 @@ package Serial_Console is
        Ch   : out Character);
    --  If the RX buffer is empty, Get will block
 
+   procedure Get_Nonblocking
+      (This : in out Port;
+       Ch   : out Character);
+   --  If the receive buffer is empty, Get_Nonblocking will set Ch := ASCII.NUL
+   --  and return immediately
+
+   function Buffer_Size
+      (This : Port)
+      return Natural;
+
    procedure Get
       (This : in out Port;
        Item : out String);

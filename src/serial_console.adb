@@ -69,6 +69,25 @@ package body Serial_Console is
       end loop;
    end Get;
 
+   procedure Get_Nonblocking
+      (This : in out Port;
+       Ch   : out Character)
+   is
+      use Character_Buffers;
+   begin
+      if Is_Empty (This.RX_Buffer) then
+         Ch := ASCII.NUL;
+      else
+         Ch := First_Element (This.RX_Buffer);
+         Delete_First (This.RX_Buffer);
+      end if;
+   end Get_Nonblocking;
+
+   function Buffer_Size
+      (This : Port)
+      return Natural
+   is (Character_Buffers.Length (This.RX_Buffer));
+
    procedure Poll
       (This : in out Port)
    is
