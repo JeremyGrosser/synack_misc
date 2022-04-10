@@ -5,7 +5,7 @@
 --
 generic
    type Element_Type is private;
-   Max_Items : Positive := 1;
+   Capacity : Positive := 1;
 package Generic_Bounded_Stacks is
 
    type Element_Array is array (Positive range <>) of Element_Type;
@@ -53,7 +53,7 @@ package Generic_Bounded_Stacks is
 private
 
    type Stack is record
-      Items : Element_Array (1 .. Max_Items);
+      Items : Element_Array (1 .. Capacity);
       Last  : Natural := 0;
    end record;
 

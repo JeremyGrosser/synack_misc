@@ -8,7 +8,7 @@ package body Generic_Bounded_Stacks is
    function Is_Full
       (S : Stack)
       return Boolean
-   is (S.Last = Max_Items);
+   is (S.Last = Capacity);
 
    function Is_Empty
       (S : Stack)
