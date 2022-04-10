@@ -2,7 +2,7 @@ generic
    Capacity : Positive := 1;
    type Element_Type is private;
 package Generic_Ring_Buffers
---   with Preelaborate
+   with Preelaborate
 is
    type Ring_Buffer is private;
 

@@ -1,5 +1,3 @@
-with Ada.Text_IO; use Ada.Text_IO;
-
 package body Generic_Ring_Buffers is
 
    function Increment
