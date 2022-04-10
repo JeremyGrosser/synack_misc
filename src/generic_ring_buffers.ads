@@ -56,6 +56,11 @@ is
 
 private
    type Index_Type is new Positive range 1 .. Capacity;
+   function Increment (I : Index_Type) return Index_Type;
+   function Decrement (I : Index_Type) return Index_Type;
+   --  Array indicies cannot be a modular type, so we do overflow logic inside
+   --  Increment and Decrement.
+
    type Element_Array is array (Index_Type) of Element_Type;
 
    type Ring_Buffer is record
