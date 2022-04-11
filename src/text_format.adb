@@ -99,12 +99,12 @@ package body Text_Format is
       (Data : HAL.UInt8_Array)
       return String
    is
-      S      : String (1 .. Data'Length * 3) := (others => ' ');
+      S      : String (1 .. (Data'Length * 3) - 1) := (others => ' ');
       Offset : Integer := S'First;
    begin
       for I in Data'Range loop
          S (Offset .. Offset + 1) := Hex (Data (I));
-         Offset := Offset + 2;
+         Offset := Offset + 3;
       end loop;
       return S;
    end Hex;
