@@ -3,9 +3,12 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
+--  Galois Linear Feedback Shift Register
+--  https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Galois_LFSRs
+
 generic
    type Random_Type is mod <>;
-   Taps : Random_Type := 16#B400#;
+   Taps : Random_Type;
 package LFSR is
 
    State : Random_Type := Random_Type'Last;

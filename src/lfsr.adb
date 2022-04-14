@@ -3,9 +3,6 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
---  Galois Linear Feedback Shift Register
---  https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Galois_LFSRs
-
 package body LFSR is
 
    function Next
