@@ -5,16 +5,17 @@
 --
 with HAL; use HAL;
 
-package LFSR is
-
-   procedure Seed
-      (N : UInt32);
+package LFSR
+   with Preelaborate
+is
 
    function Next
+      (State : in out UInt32)
       return UInt32;
 
    function In_Range
-      (First, Last : UInt32)
+      (State : in out UInt32;
+       First, Last : UInt32)
       return UInt32;
 
 end LFSR;

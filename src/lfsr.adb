@@ -5,18 +5,11 @@
 --
 --  Galois Linear Feedback Shift Register
 --  https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Galois_LFSRs
+
 package body LFSR is
 
-   State : UInt32 := 16#DEAD#;
-
-   procedure Seed
-      (N : UInt32)
-   is
-   begin
-      State := N;
-   end Seed;
-
    function Next
+      (State : in out UInt32)
       return UInt32
    is
       Taps : constant UInt32 := 16#B400#;
@@ -34,7 +27,9 @@ package body LFSR is
    end Next;
 
    function In_Range
-      (First, Last : UInt32)
+      (State : in out UInt32;
+       First, Last : UInt32)
       return UInt32
-   is (First + (Next mod (Last - First + 1)));
+   is (First + (Next (State) mod (Last - First + 1)));
+
 end LFSR;
