@@ -3,7 +3,7 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
-with Generic_Ring_Buffers;
+with Chests.Ring_Buffers;
 with HAL.UART;
 
 package Serial_Console is
@@ -57,8 +57,8 @@ package Serial_Console is
 
 private
 
-   package Character_Buffers is new Generic_Ring_Buffers
-      (Capacity     => 128,
+   package Character_Buffers is new Chests.Ring_Buffers
+      (Capacity     => 32,
        Element_Type => Character);
 
    type Port
