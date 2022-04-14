@@ -3,19 +3,18 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
-with HAL; use HAL;
+generic
+   type Random_Type is mod <>;
+   Taps : Random_Type := 16#B400#;
+package LFSR is
 
-package LFSR
-   with Preelaborate
-is
+   State : Random_Type := Random_Type'Last;
 
    function Next
-      (State : in out UInt32)
-      return UInt32;
+      return Random_Type;
 
    function In_Range
-      (State : in out UInt32;
-       First, Last : UInt32)
-      return UInt32;
+      (First, Last : Random_Type)
+      return Random_Type;
 
 end LFSR;

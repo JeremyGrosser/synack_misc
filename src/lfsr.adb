@@ -9,16 +9,14 @@
 package body LFSR is
 
    function Next
-      (State : in out UInt32)
-      return UInt32
+      return Random_Type
    is
-      Taps : constant UInt32 := 16#B400#;
-      N    : UInt32 := State;
-      LSB  : UInt32;
+      N    : Random_Type := State;
+      LSB  : Random_Type;
    begin
       loop
          LSB := N and 1;
-         N := Shift_Right (N, 1);
+         N := N / 2;
          N := N xor ((-LSB) and Taps);
          exit when N /= State;
       end loop;
@@ -27,9 +25,8 @@ package body LFSR is
    end Next;
 
    function In_Range
-      (State : in out UInt32;
-       First, Last : UInt32)
-      return UInt32
-   is (First + (Next (State) mod (Last - First + 1)));
+      (First, Last : Random_Type)
+      return Random_Type
+   is (First + (Next mod (Last - First + 1)));
 
 end LFSR;
