@@ -7,8 +7,6 @@ maintainers = ["Jeremy Grosser <jeremy@synack.me>"]
 maintainers-logins = ["JeremyGrosser"]
 
 [[depends-on]]  # Added by alr
-hal = "~0.1.0"  # Added by alr
+hal = "~0.3.0"  # Added by alr
 [[depends-on]]  # Added by alr
-chests = "~0.1.0"  # Added by alr
-[[pins]]  # Added by alr
-chests = { url='https://github.com/JeremyGrosser/chests' }   # Added by alr
+chests = "~0.1.1"  # Added by alr
