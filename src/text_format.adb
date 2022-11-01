@@ -96,10 +96,11 @@ package body Text_Format is
    end Hex;
 
    function Hex
-      (Data : HAL.UInt8_Array)
+      (Data      : HAL.UInt8_Array;
+       Delimiter : Character := ' ')
       return String
    is
-      S      : String (1 .. (Data'Length * 3) - 1) := (others => ' ');
+      S      : String (1 .. (Data'Length * 3) - 1) := (others => Delimiter);
       Offset : Integer := S'First;
    begin
       for I in Data'Range loop

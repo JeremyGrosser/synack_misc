@@ -62,7 +62,8 @@ package Text_Format is
        Str  : out String);
 
    function Hex
-      (Data : HAL.UInt8_Array)
+      (Data      : HAL.UInt8_Array;
+       Delimiter : Character := ' ')
       return String;
 
    function From_UInt8_Array
