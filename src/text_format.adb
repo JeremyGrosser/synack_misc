@@ -84,14 +84,19 @@ package body Text_Format is
    end Hex;
 
    function Hex
+      (Data : HAL.UInt4)
+      return Character
+   is (Numbers (Numbers'First + Integer (Data)));
+
+   function Hex
       (Data : HAL.UInt8)
       return Hex_String
    is
       use HAL;
       S : Hex_String;
    begin
-      S (1) := Numbers (Numbers'First + Integer (Shift_Right (Data, 4)));
-      S (2) := Numbers (Numbers'First + Integer (Data and 16#F#));
+      S (1) := Hex (HAL.UInt4 (Shift_Right (Data, 4)));
+      S (2) := Hex (HAL.UInt4 (Data and 16#F#));
       return S;
    end Hex;
 

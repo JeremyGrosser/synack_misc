@@ -54,6 +54,10 @@ package Text_Format is
    subtype Hex_String is String (1 .. 2);
 
    function Hex
+      (Data : HAL.UInt4)
+      return Character;
+
+   function Hex
       (Data : HAL.UInt8)
       return Hex_String;
 
