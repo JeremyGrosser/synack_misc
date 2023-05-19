@@ -65,6 +65,10 @@ package Text_Format is
       (Data : HAL.UInt16)
       return String;
 
+   function Hex
+      (Data : HAL.UInt32)
+      return String;
+
    procedure Hex
       (Data : HAL.UInt8_Array;
        Str  : out String);

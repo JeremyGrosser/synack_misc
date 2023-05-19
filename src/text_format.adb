@@ -124,6 +124,18 @@ package body Text_Format is
       return Hex (UInt8 (Shift_Right (Data, 8))) & Hex (UInt8 (Data and 16#FF#));
    end Hex;
 
+   function Hex
+      (Data : HAL.UInt32)
+      return String
+   is
+      use HAL;
+   begin
+      return Hex (UInt8 (Shift_Right (Data, 24) and 16#FF#)) &
+             Hex (UInt8 (Shift_Right (Data, 16) and 16#FF#)) &
+             Hex (UInt8 (Shift_Right (Data, 8) and 16#FF#)) &
+             Hex (UInt8 (Shift_Right (Data, 0) and 16#FF#));
+   end Hex;
+
    function ISO_Date
       (Date        : RTC_Date;
        Year_Offset : Integer := 2000)
