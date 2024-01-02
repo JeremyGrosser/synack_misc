@@ -8,8 +8,9 @@ with HAL.GPIO;
 with HAL.SPI;
 with HAL; use HAL;
 
-package SD_SPI is
-
+package SD_SPI
+   with Preelaborate
+is
    type Block_Driver
       (Port : not null HAL.SPI.Any_SPI_Port;
        CS   : not null HAL.GPIO.Any_GPIO_Point)
