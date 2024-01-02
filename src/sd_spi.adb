@@ -235,19 +235,17 @@ package body SD_SPI is
       (This : in out Block_Driver)
    is
       R1 : UInt8;
-      OCR : UInt32 := 0;
+      OCR : UInt8_Array (1 .. 4);
    begin
       Set_CS (This, False);
       Send_Command (This, 58, 0, 16#55#, R1);
       if R1 /= 0 then
          This.Error := 58;
       else
-         for I in 1 .. 4 loop
-            OCR := Shift_Left (OCR, 8) or UInt32 (SPI_Read (This));
-         end loop;
-         This.SDHC := (OCR and 16#C000_0000#) = 16#4000_0000#;
-         --  Only if the CCS bit is set and Card Power Up Status bit is clear,
-         --  then this is an SDHC card
+         SPI_Read (This, OCR);
+         This.SDHC := (OCR (1) and 16#C0#) = 16#C0#;
+         --  If the CCS bit and Card Power Up Status bits are set then this is
+         --  an SDHC card
       end if;
       Set_CS (This, True);
    end READ_OCR;
