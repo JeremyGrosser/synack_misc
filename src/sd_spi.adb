@@ -277,6 +277,9 @@ package body SD_SPI is
       if R1 /= 0 then
          This.Error := 9;
       else
+         loop
+            exit when SPI_Read (This) = 16#FE#;
+         end loop;
          SPI_Read (This, CSD_Data, Reverse_Order => True);
          CSD := To_CSD_Register (CSD_Data);
          for I in reverse 1 .. CSD.CCC'Size loop
