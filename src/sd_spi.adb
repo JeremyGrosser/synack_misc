@@ -3,12 +3,19 @@
 --
 --  SPDX-License-Identifier: BSD-3-Clause
 --
+with Ada.Unchecked_Conversion;
+
 package body SD_SPI is
 
    function Has_Error
       (This : Block_Driver)
       return Boolean
    is (This.Error >= 0);
+
+   function Max_Bus_Speed
+      (This : Block_Driver)
+      return Natural
+   is (This.Speed);
 
    procedure Set_CS
       (This : Block_Driver;
@@ -39,15 +46,23 @@ package body SD_SPI is
 
    procedure SPI_Read
       (This : Block_Driver;
-       Data : out UInt8_Array)
+       Data : out UInt8_Array;
+       Reverse_Order : Boolean := False)
    is
       use HAL.SPI;
       Status : SPI_Status;
    begin
-      for I in Data'Range loop
-         This.Port.Transmit (SPI_Data_8b'(1 => 16#FF#), Status);
-         This.Port.Receive (SPI_Data_8b (Data (I .. I)), Status);
-      end loop;
+      if not Reverse_Order then
+         for I in Data'Range loop
+            This.Port.Transmit (SPI_Data_8b'(1 => 16#FF#), Status);
+            This.Port.Receive (SPI_Data_8b (Data (I .. I)), Status);
+         end loop;
+      else
+         for I in reverse Data'Range loop
+            This.Port.Transmit (SPI_Data_8b'(1 => 16#FF#), Status);
+            This.Port.Receive (SPI_Data_8b (Data (I .. I)), Status);
+         end loop;
+      end if;
    end SPI_Read;
 
    procedure SPI_Write
@@ -237,11 +252,49 @@ package body SD_SPI is
       Set_CS (This, True);
    end READ_OCR;
 
+   procedure SEND_CSD
+      (This : in out Block_Driver)
+   is
+      type CSD_Register is record
+         CCC : UInt12;
+      end record
+         with Size => 128;
+      for CSD_Register use record
+         CCC at 0 range 84 .. 95;
+      end record;
+
+      subtype CSD_Bytes is UInt8_Array (1 .. CSD_Register'Size / 8);
+      function To_CSD_Register is new Ada.Unchecked_Conversion
+         (UInt8_Array, CSD_Register);
+
+      CSD_Data : CSD_Bytes;
+      CSD : CSD_Register;
+
+      R1 : UInt8;
+   begin
+      Set_CS (This, False);
+      Send_Command (This, 9, 0, 16#55#, R1);
+      if R1 /= 0 then
+         This.Error := 9;
+      else
+         SPI_Read (This, CSD_Data, Reverse_Order => True);
+         CSD := To_CSD_Register (CSD_Data);
+         for I in reverse 1 .. CSD.CCC'Size loop
+            if (Shift_Right (UInt16 (CSD.CCC), I) and 1) = 1 then
+               This.Speed := I * 1_000_000;
+               exit;
+            end if;
+         end loop;
+      end if;
+      Set_CS (This, True);
+   end SEND_CSD;
+
    procedure Initialize
       (This : in out Block_Driver)
    is
    begin
       This.Error := -1;
+      This.Speed := 400_000;
 
       GO_IDLE (This);
       if Has_Error (This) then
@@ -264,6 +317,11 @@ package body SD_SPI is
       end if;
 
       SET_BLOCKLEN (This);
+      if Has_Error (This) then
+         return;
+      end if;
+
+      SEND_CSD (This);
       if Has_Error (This) then
          return;
       end if;

@@ -19,6 +19,10 @@ is
    procedure Initialize
       (This : in out Block_Driver);
 
+   function Max_Bus_Speed
+      (This : Block_Driver)
+      return Natural;
+
    function Has_Error
       (This : Block_Driver)
       return Boolean;
@@ -45,6 +49,7 @@ private
    is new HAL.Block_Drivers.Block_Driver with record
       Error : Integer := -1;
       SDHC  : Boolean := False;
+      Speed : Natural := 400_000;
    end record;
 
 end SD_SPI;
