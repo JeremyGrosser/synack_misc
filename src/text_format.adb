@@ -77,7 +77,7 @@ package body Text_Format is
    begin
       loop
          I := I - 2;
-         exit when I < Str'First or J > Data'Last;
+         exit when I < Str'First or else J > Data'Last;
          Str (I .. I + 1) := Hex (Data (J));
          J := J + 1;
       end loop;
