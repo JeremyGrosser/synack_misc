@@ -22,8 +22,8 @@
 --
 --  If you need to detect the presence of a card, disable all pullups on CS and
 --  interrupt on the rising edge. CS must be reconfigured as an output before
---  calling Initialize.Or, you can poll Initialize until Has_Error returns
---  False.
+--  calling Initialize. Or, you can just poll Initialize until Has_Error
+--  returns False.
 --
 --  CS, MOSI, MISO, and CLK should all have pullup resistors of approximately
 --  10k ohm. Most cards will have weak 50k resistors internally.
