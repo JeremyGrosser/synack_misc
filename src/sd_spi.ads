@@ -21,14 +21,11 @@
 --  get into a weird state that only a power cycle can fix.
 --
 --  If you need to detect the presence of a card, disable all pullups on CS and
---  interrupt on the rising edge. Or, you can poll Initialize until Has_Error
---  returns False.
+--  interrupt on the rising edge. CS must be reconfigured as an output before
+--  calling Initialize.Or, you can poll Initialize until Has_Error returns
+--  False.
 --
---  CS should be configured as an output with a pullup resistor before calling
---  Initialize. Use an external 10k resistor if your GPIO does not have
---  internal pullups.
---
---  MOSI, MISO, and CLK should all have pullup resistors of approximately
+--  CS, MOSI, MISO, and CLK should all have pullup resistors of approximately
 --  10k ohm. Most cards will have weak 100k resistors internally.
 --
 --  If Has_Error returns True, the only way to reset it is to Initialize again.
