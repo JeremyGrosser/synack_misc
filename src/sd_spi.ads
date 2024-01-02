@@ -26,7 +26,7 @@
 --  False.
 --
 --  CS, MOSI, MISO, and CLK should all have pullup resistors of approximately
---  10k ohm. Most cards will have weak 100k resistors internally.
+--  10k ohm. Most cards will have weak 50k resistors internally.
 --
 --  If Has_Error returns True, the only way to reset it is to Initialize again.
 --  The card might still work after an error, but I wouldn't count on it.
