@@ -31,7 +31,7 @@
 --  If Has_Error returns True, the only way to reset it is to Initialize again.
 --  The card might still work after an error, but I wouldn't count on it.
 --
---  Call Max_Bus_Speed to get the SPI clock frequency in Hertz. Prior to
+--  Call Max_Bus_Speed_KHz to get the SPI clock frequency. Prior to
 --  Initialize, this is set to 400 KHz. After initialization, it may return up
 --  to 50 MHz depending on what the card reports.
 --
@@ -56,7 +56,7 @@ is
    procedure Initialize
       (This : in out Block_Driver);
 
-   function Max_Bus_Speed
+   function Max_Bus_Speed_KHz
       (This : Block_Driver)
       return Natural;
 
@@ -86,7 +86,7 @@ private
    is new HAL.Block_Drivers.Block_Driver with record
       Error : Integer := -1;
       SDHC  : Boolean := False;
-      Speed : Natural := 400_000;
+      Speed_KHz : Natural := 400;
    end record;
 
 end SD_SPI;

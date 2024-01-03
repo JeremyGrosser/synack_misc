@@ -12,10 +12,10 @@ package body SD_SPI is
       return Boolean
    is (This.Error >= 0);
 
-   function Max_Bus_Speed
+   function Max_Bus_Speed_KHz
       (This : Block_Driver)
       return Natural
-   is (This.Speed);
+   is (This.Speed_KHz);
 
    procedure Set_CS
       (This : Block_Driver;
@@ -309,7 +309,7 @@ package body SD_SPI is
          SPI_Read (This, CSD_Data, Reverse_Order => True);
          CSD := To_CSD_Register (CSD_Data);
 
-         This.Speed := (10 ** Natural (CSD.TRAN_SPEED_UNIT)) * 10_000 * TS_MUL (CSD.TRAN_SPEED_TIME);
+         This.Speed_KHz := (10 ** (Natural (CSD.TRAN_SPEED_UNIT) + 1)) * TS_MUL (CSD.TRAN_SPEED_TIME);
       end if;
       Set_CS (This, True);
    end SEND_CSD;
@@ -319,7 +319,7 @@ package body SD_SPI is
    is
    begin
       This.Error := -1;
-      This.Speed := 400_000;
+      This.Speed_KHz := 400;
 
       GO_IDLE (This);
       if Has_Error (This) then
