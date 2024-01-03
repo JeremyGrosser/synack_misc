@@ -84,7 +84,8 @@ package body SD_SPI is
    end SPI_Read;
 
    procedure Sync
-      (This : Block_Driver)
+      (This  : Block_Driver;
+       Token : UInt8 := 16#FF#)
    is
       use HAL.SPI;
       Data : SPI_Data_8b (1 .. 1);
@@ -94,7 +95,7 @@ package body SD_SPI is
          Data (1) := 16#FF#;
          This.Port.Transmit (Data, Status, Timeout => 0);
          This.Port.Receive (Data, Status, Timeout => 0);
-         exit when Data (1) = 16#FF#;
+         exit when Data (1) = Token;
       end loop;
    end Sync;
 
@@ -261,13 +262,13 @@ package body SD_SPI is
       (This : in out Block_Driver)
    is
       type CSD_Register is record
-         TRAN_SPEED_UNIT : UInt3;
-         TRAN_SPEED_TIME : UInt4;
+         TRAN_SPEED_UNIT   : UInt3;
+         TRAN_SPEED_TIME   : UInt4;
       end record
          with Size => 128;
       for CSD_Register use record
-         TRAN_SPEED_UNIT at 0 range 96 .. 98;
-         TRAN_SPEED_TIME at 0 range 99 .. 103;
+         TRAN_SPEED_UNIT   at 0 range 96 .. 98;
+         TRAN_SPEED_TIME   at 0 range 99 .. 103;
       end record;
 
       subtype CSD_Bytes is UInt8_Array (1 .. CSD_Register'Size / 8);
@@ -303,9 +304,7 @@ package body SD_SPI is
       if R1 /= 0 then
          This.Error := 9;
       else
-         loop
-            exit when SPI_Read (This) = 16#FE#;
-         end loop;
+         Sync (This, 16#FE#);
          SPI_Read (This, CSD_Data, Reverse_Order => True);
          CSD := To_CSD_Register (CSD_Data);
 
@@ -384,9 +383,7 @@ package body SD_SPI is
       Set_CS (This, False);
       Send_Command (This, 17, Block_Offset (This, Block_Number), 16#55#, R1);
       if R1 = 0 then
-         loop
-            exit when SPI_Read (This) = 16#FE#;
-         end loop;
+         Sync (This, 16#FE#);
          SPI_Read (This, Data);
          R1 := SPI_Read (This); --  CRC16
          R1 := SPI_Read (This); --  CRC16
