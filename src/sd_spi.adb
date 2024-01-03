@@ -86,12 +86,15 @@ package body SD_SPI is
    procedure Sync
       (This : Block_Driver)
    is
-      Data : UInt8;
+      use HAL.SPI;
+      Data : SPI_Data_8b (1 .. 1);
+      Status : SPI_Status;
    begin
       loop
-         SPI_Write (This, 16#FF#);
-         Data := SPI_Read (This);
-         exit when Data = 16#FF#;
+         Data (1) := 16#FF#;
+         This.Port.Transmit (Data, Status);
+         This.Port.Receive (Data, Status);
+         exit when Data (1) = 16#FF#;
       end loop;
    end Sync;
 
