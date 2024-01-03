@@ -33,7 +33,7 @@
 --
 --  Call Max_Bus_Speed to get the SPI clock frequency in Hertz. Prior to
 --  Initialize, this is set to 400 KHz. After initialization, it may return up
---  to 12 MHz depending on what the card reports.
+--  to 50 MHz depending on what the card reports.
 --
 --  Read and Write only support single block operations. Blocks are always 512
 --  bytes.
