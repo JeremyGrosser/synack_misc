@@ -69,14 +69,16 @@ is
       (This : in out Block_Driver;
        Block_Number : UInt64;
        Data : out HAL.Block_Drivers.Block)
-       return Boolean;
+       return Boolean
+   with Pre => Data'Length = 512;
 
    overriding
    function Write
       (This : in out Block_Driver;
        Block_Number : UInt64;
        Data : HAL.Block_Drivers.Block)
-       return Boolean;
+       return Boolean
+   with Pre => Data'Length = 512;
 
    type Block_Array is array (Positive range <>) of HAL.Block_Drivers.Block (1 .. 512)
       with Component_Size => 512 * 8;
