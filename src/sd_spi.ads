@@ -78,6 +78,21 @@ is
        Data : HAL.Block_Drivers.Block)
        return Boolean;
 
+   type Block_Array is array (Positive range <>) of HAL.Block_Drivers.Block (1 .. 512)
+      with Component_Size => 512 * 8;
+
+   procedure Read_Multiple
+      (This : in out Block_Driver;
+       Block_Number : UInt64;
+       Data : out Block_Array;
+       Last : out Natural);
+
+   procedure Write_Multiple
+      (This : in out Block_Driver;
+       Block_Number : UInt64;
+       Data : Block_Array;
+       Last : out Natural);
+
 private
 
    type Block_Driver

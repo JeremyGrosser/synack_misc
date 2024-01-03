@@ -421,4 +421,79 @@ package body SD_SPI is
       return not Has_Error (This);
    end Write;
 
+   procedure Read_Multiple
+      (This : in out Block_Driver;
+       Block_Number : UInt64;
+       Data : out Block_Array;
+       Last : out Natural)
+   is
+      Offset : constant UInt32 := Block_Offset (This, Block_Number);
+      Token : UInt8;
+      R1 : UInt8;
+      CRC : UInt8;
+   begin
+      Last := Data'First - 1;
+      Set_CS (This, False);
+      Send_Command (This, 18, Offset, 16#55#, R1);
+      if R1 = 0 then
+         for I in Data'Range loop
+            --  Like Sync, but with error token handling
+            loop
+               Token := SPI_Read (This);
+               exit when Token = 16#FE#;
+               if (Token and 16#F0#) = 0 and then (Token and 16#0F#) /= 0 then
+                  --  Data error, abort
+                  This.Error := 18;
+                  Set_CS (This, True);
+                  return;
+               end if;
+            end loop;
+
+            SPI_Read (This, Data (I));
+            CRC := SPI_Read (This);
+            CRC := SPI_Read (This);
+            Last := I;
+         end loop;
+         Send_Command (This, 12, 0, 16#55#, R1);
+      end if;
+      Set_CS (This, True);
+   end Read_Multiple;
+
+   procedure Write_Multiple
+      (This : in out Block_Driver;
+       Block_Number : UInt64;
+       Data : Block_Array;
+       Last : out Natural)
+   is
+      Offset : constant UInt32 := Block_Offset (This, Block_Number);
+      Token : UInt8;
+      R1 : UInt8;
+      CRC : UInt8;
+   begin
+      Last := Data'First - 1;
+      Set_CS (This, False);
+      Send_Command (This, 25, Offset, 16#55#, R1);
+      if R1 = 0 then
+         SPI_Write (This, 16#FC#);
+         for I in Data'Range loop
+            SPI_Write (This, Data (I));
+            SPI_Write (This, 16#55#); --  CRC
+            SPI_Write (This, 16#55#);
+            R1 := SPI_Read (This);
+            Sync (This);
+            if (R1 and 16#F0#) = 0 and then (R1 and 16#0F#) /= 0 then
+               This.Error := 25;
+               Set_CS (This, True);
+               return;
+            end if;
+            Last := I;
+         end loop;
+         SPI_Write (This, 16#FD#); --  Stop Tran
+         Sync (This);
+      else
+         This.Error := 25;
+      end if;
+      Set_CS (This, True);
+   end Write_Multiple;
+
 end SD_SPI;
