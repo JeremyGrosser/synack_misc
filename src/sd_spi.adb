@@ -308,7 +308,11 @@ package body SD_SPI is
          SPI_Read (This, CSD_Data, Reverse_Order => True);
          CSD := To_CSD_Register (CSD_Data);
 
-         This.Speed_KHz := (10 ** (Natural (CSD.TRAN_SPEED_UNIT) + 1)) * TS_MUL (CSD.TRAN_SPEED_TIME);
+         This.Speed_KHz := 1;
+         for I in 0 .. CSD.TRAN_SPEED_UNIT loop
+            This.Speed_KHz := This.Speed_KHz * 10;
+         end loop;
+         This.Speed_KHz := This.Speed_KHz * TS_MUL (CSD.TRAN_SPEED_TIME);
       end if;
       Set_CS (This, True);
    end SEND_CSD;
