@@ -11,4 +11,6 @@ tags = []
 
 [[depends-on]]
 chests = "~0.1.1"
-hal = "~0.3.0"
+
+[[depends-on]]
+hal = "^1"
